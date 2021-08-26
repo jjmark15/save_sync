@@ -33,13 +33,6 @@ impl ServerTestClient {
         )
     }
 
-    async fn build_and_send_request(
-        &self,
-        request_builder: reqwest::RequestBuilder,
-    ) -> reqwest::Response {
-        request_builder.send().await.unwrap()
-    }
-
     async fn client_call<V>(
         &self,
         url_path_segments: &[&str],
@@ -51,7 +44,7 @@ impl ServerTestClient {
             self.http_request_base_url(url_path_segments).unwrap(),
         );
 
-        let http_response = self.build_and_send_request(request).await;
+        let http_response = request.send().await.unwrap();
 
         ResponseWrapper::new(
             HttpResponseDetails::from(&http_response),
