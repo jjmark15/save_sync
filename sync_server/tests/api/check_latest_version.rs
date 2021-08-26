@@ -8,7 +8,7 @@ use crate::helpers::TestContext;
 #[tokio::test]
 async fn check_latest_version() {
     let ctx = TestContext::new();
-    let save_id = SaveId::new("save_id".to_string());
+    let save_id = SaveId::from("save id");
 
     let response = ctx.client().latest_version(save_id).await;
 

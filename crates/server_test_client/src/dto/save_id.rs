@@ -16,3 +16,9 @@ impl Display for SaveId {
         write!(f, "{}", self.value)
     }
 }
+
+impl From<&str> for SaveId {
+    fn from(s: &str) -> Self {
+        SaveId::new(s.to_string())
+    }
+}
