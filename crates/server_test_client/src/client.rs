@@ -3,8 +3,10 @@ use std::net::SocketAddr;
 use http::Method;
 use url::{ParseError, Url};
 
+use crate::dto::SaveId;
 use crate::response::{
     HttpResponseDetails, NoValueResponseValueExtractor, ResponseValueExtractor, ResponseWrapper,
+    SaveVersionValueExtractor,
 };
 
 pub struct ServerTestClient {
@@ -62,6 +64,15 @@ impl ServerTestClient {
             &["admin", "status"],
             Method::GET,
             NoValueResponseValueExtractor::new(),
+        )
+        .await
+    }
+
+    pub async fn latest_version(&self, save_id: SaveId) -> ResponseWrapper<u32> {
+        self.client_call(
+            &["save", "version", "latest", save_id.to_string().as_str()],
+            Method::GET,
+            SaveVersionValueExtractor::new(),
         )
         .await
     }

@@ -1,5 +1,9 @@
 use reqwest::Response;
 
+pub(crate) use save_version_value_extractor::SaveVersionValueExtractor;
+
+mod save_version_value_extractor;
+
 #[async_trait::async_trait]
 pub(crate) trait ResponseValueExtractor {
     type Value;

@@ -3,5 +3,6 @@ pub(crate) use response_value_extractor::*;
 pub use response_wrapper::ResponseWrapper;
 
 mod http_response_details;
+mod models;
 mod response_value_extractor;
 mod response_wrapper;
