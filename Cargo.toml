@@ -1,2 +1,2 @@
 [workspace]
-members = ["sync_server"]
+members = ["crates/*", "sync_server"]
