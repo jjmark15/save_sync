@@ -13,7 +13,7 @@ async fn main() {
 
 fn initialise_logging() {
     if std::env::var("RUST_LOG").is_err() {
-        std::env::set_var("RUST_LOG", "monitor_server=info")
+        std::env::set_var("RUST_LOG", "sync_server=info")
     }
     tracing_subscriber::fmt::init();
 }
