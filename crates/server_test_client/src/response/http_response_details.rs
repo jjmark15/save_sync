@@ -1,6 +1,7 @@
 use http::header::HeaderName;
 use http::{HeaderMap, HeaderValue, StatusCode};
 
+#[derive(Debug)]
 pub struct HttpResponseDetails {
     status_code: StatusCode,
     headers: HeaderMap,

@@ -1,36 +1,50 @@
 use std::net::{IpAddr, Ipv6Addr, SocketAddr, TcpListener};
+use std::path::PathBuf;
 
 use tokio::task::JoinHandle;
 
 use server_test_client::{HttpClient, ServerTestClient};
 use sync_server::App;
 
+use crate::helpers::test_directory_manager::TestDirectoryManager;
+
 pub(crate) struct TestContext {
-    server_test_consumer_client: ServerTestClient,
+    server_test_client: ServerTestClient,
+    test_directory_manager: TestDirectoryManager,
 }
 
 impl TestContext {
     pub(crate) fn new() -> Self {
-        let (address, _server) = Self::server();
-        let server_test_client = ServerTestClient::new(address, HttpClient::new());
+        let tcp_listener = Self::tcp_listener();
+        let socket_address = tcp_listener.local_addr().unwrap();
+        let server_test_client = ServerTestClient::new(socket_address, HttpClient::new());
 
-        TestContext {
-            server_test_consumer_client: server_test_client,
-        }
+        let test_context = TestContext {
+            server_test_client,
+            test_directory_manager: TestDirectoryManager::new(),
+        };
+
+        let _server = Self::server(
+            tcp_listener,
+            test_context
+                .test_directory_manager
+                .persistence_directory()
+                .to_path_buf(),
+        );
+
+        test_context
     }
 
     pub(crate) fn client(&self) -> &ServerTestClient {
-        &self.server_test_consumer_client
+        &self.server_test_client
     }
 
-    fn server() -> (SocketAddr, JoinHandle<()>) {
-        let listener =
-            TcpListener::bind(SocketAddr::new(IpAddr::V6(Ipv6Addr::LOCALHOST), 0)).unwrap();
-        let address = listener.local_addr().unwrap();
-        let server = App::new();
+    fn server(listener: TcpListener, persistence_directory: PathBuf) -> JoinHandle<()> {
+        let server = App::new(persistence_directory);
+        tokio::spawn(async move { server.run(listener).await })
+    }
 
-        let server_future = tokio::spawn(async move { server.run(listener).await });
-
-        (address, server_future)
+    fn tcp_listener() -> TcpListener {
+        TcpListener::bind(SocketAddr::new(IpAddr::V6(Ipv6Addr::LOCALHOST), 0)).unwrap()
     }
 }

@@ -1,4 +1,5 @@
 use std::net::{IpAddr, Ipv6Addr, SocketAddr, TcpListener};
+use std::path::PathBuf;
 
 use sync_server::App;
 
@@ -8,7 +9,7 @@ async fn main() {
     let address = SocketAddr::new(IpAddr::V6(Ipv6Addr::LOCALHOST), 3030);
     let listener = TcpListener::bind(address).unwrap();
 
-    App::new().run(listener).await
+    App::new(PathBuf::from(".")).run(listener).await
 }
 
 fn initialise_logging() {
