@@ -6,7 +6,6 @@ use axum::response::IntoResponse;
 use axum::Json;
 
 use crate::ports::http::axum::error::MissingMandatoryDataError;
-use crate::ports::http::axum::error_handling::HandleAppResult;
 use crate::ports::http::axum::handlers::app_error::AppError;
 use crate::ports::http::axum::models::{StoreNewSaveRequest, StoreNewSaveResponse};
 use crate::DynApplicationService;
@@ -28,7 +27,8 @@ pub(crate) async fn store_new_save_handler(
             request.save_data(),
         )
         .await
-        .handle_app_result(|save_id| {
+        .map_err(AppError::from)
+        .map(|save_id| {
             (
                 StatusCode::CREATED,
                 Json(StoreNewSaveResponse::new(save_id.to_string())),
