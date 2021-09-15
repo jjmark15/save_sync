@@ -12,8 +12,8 @@ pub(crate) trait ApplicationService {
     async fn store_new_save(
         &self,
         game_name: String,
-        save_data: Vec<u8>,
         file_name: String,
+        save_data: Vec<u8>,
     ) -> Result<Uuid, StoreNewSaveError>;
 
     async fn get_save(&self, save_id: Uuid) -> Result<Save, GetSaveError>;
@@ -33,8 +33,8 @@ where
     async fn store_new_save(
         &self,
         game_name: String,
-        save_data: Vec<u8>,
         file_name: String,
+        save_data: Vec<u8>,
     ) -> Result<Uuid, StoreNewSaveError> {
         self.save_service
             .store_new(

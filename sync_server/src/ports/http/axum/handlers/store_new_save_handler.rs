@@ -21,12 +21,11 @@ pub(crate) async fn store_new_save_handler(
     >,
 ) -> Result<impl IntoResponse, AppError> {
     let request = game_save_from_form(multipart).await?;
-    let file_name = request.file_name().to_string();
     application_service
         .store_new_save(
             request.game_name().to_string(),
+            request.file_name().to_string(),
             request.save_data(),
-            file_name,
         )
         .await
         .handle_app_result(|save_id| {
