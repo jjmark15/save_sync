@@ -1,10 +1,7 @@
-use std::convert::TryFrom;
-
 use uuid::Uuid;
 
 use crate::domain::{
-    GameName, GetSaveError, InvalidSaveMetadataError, Save, SaveData, SaveFileName, SaveId,
-    SaveService, StoreNewSaveError,
+    GameName, GetSaveError, Save, SaveData, SaveFileName, SaveId, SaveService, StoreNewSaveError,
 };
 
 #[async_trait::async_trait]
@@ -40,7 +37,7 @@ where
             .store_new(
                 GameName::new(game_name),
                 SaveData::new(save_data),
-                SaveFileName::try_from(file_name).map_err(InvalidSaveMetadataError::from)?,
+                SaveFileName::from(file_name),
             )
             .await
             .map(|save_id| *save_id.value())

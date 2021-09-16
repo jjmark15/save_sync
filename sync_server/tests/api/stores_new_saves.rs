@@ -51,10 +51,8 @@ async fn save_file_name_must_not_be_empty() {
         .await;
 
     assert_that(&response.http_response_details().status()).is_equal_to(StatusCode::NOT_ACCEPTABLE);
-    assert_that(response.error().message()).is_equal_to(
-        &"failed to store new save: invalid save metadata: save file name cannot be empty"
-            .to_string(),
-    );
+    assert_that(response.error().message())
+        .is_equal_to(&"save file name must not be empty".to_string());
 }
 
 #[tokio::test]
@@ -71,10 +69,8 @@ async fn save_file_name_must_not_be_empty_with_whitespace() {
         .await;
 
     assert_that(&response.http_response_details().status()).is_equal_to(StatusCode::NOT_ACCEPTABLE);
-    assert_that(response.error().message()).is_equal_to(
-        &"failed to store new save: invalid save metadata: save file name cannot be empty"
-            .to_string(),
-    );
+    assert_that(response.error().message())
+        .is_equal_to(&"save file name must not be empty".to_string());
 }
 
 #[tokio::test]

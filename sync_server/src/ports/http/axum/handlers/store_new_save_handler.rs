@@ -5,7 +5,9 @@ use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
 
-use crate::ports::http::axum::error::MissingMandatoryDataError;
+use crate::ports::http::axum::error::{
+    EmptySaveFileNameError, MissingMandatoryDataError, StoreNewSaveError,
+};
 use crate::ports::http::axum::handlers::app_error::AppError;
 use crate::ports::http::axum::models::{StoreNewSaveRequest, StoreNewSaveResponse};
 use crate::DynApplicationService;
@@ -27,7 +29,7 @@ pub(crate) async fn store_new_save_handler(
             request.save_data(),
         )
         .await
-        .map_err(AppError::from)
+        .map_err(|error| AppError::StoreNewSave(error.into()))
         .map(|save_id| {
             (
                 StatusCode::CREATED,
@@ -38,7 +40,7 @@ pub(crate) async fn store_new_save_handler(
 
 async fn game_save_from_form(
     mut multipart: Multipart,
-) -> Result<StoreNewSaveRequest, MissingMandatoryDataError> {
+) -> Result<StoreNewSaveRequest, StoreNewSaveError> {
     let mut game_name: Option<String> = None;
     let mut file_name: Option<String> = None;
     let mut save_data: Option<Vec<u8>> = None;
@@ -49,13 +51,16 @@ async fn game_save_from_form(
         if name == "game_name" {
             game_name = Some(String::from_utf8(field.bytes().await.unwrap().to_vec()).unwrap());
         } else if let Some(file_name_value) = field.file_name() {
+            if file_name_value.trim().is_empty() {
+                return Err(EmptySaveFileNameError::new().into());
+            }
             file_name = Some(file_name_value.to_string());
             save_data = Some(field.bytes().await.unwrap().to_vec());
         }
     }
 
     if file_name.is_none() || save_data.is_none() || game_name.is_none() {
-        return Err(MissingMandatoryDataError::new());
+        return Err(MissingMandatoryDataError::new().into());
     }
 
     Ok(StoreNewSaveRequest::new(

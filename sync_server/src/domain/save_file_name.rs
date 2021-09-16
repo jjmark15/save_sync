@@ -1,7 +1,3 @@
-use std::convert::TryFrom;
-
-use crate::domain::EmptySaveFileNameError;
-
 pub(crate) struct SaveFileName {
     value: String,
 }
@@ -16,14 +12,8 @@ impl SaveFileName {
     }
 }
 
-impl TryFrom<String> for SaveFileName {
-    type Error = EmptySaveFileNameError;
-
-    fn try_from(value: String) -> Result<Self, Self::Error> {
-        if value.trim().is_empty() {
-            Err(EmptySaveFileNameError)
-        } else {
-            Ok(SaveFileName::new(value))
-        }
+impl From<String> for SaveFileName {
+    fn from(value: String) -> Self {
+        SaveFileName::new(value)
     }
 }
