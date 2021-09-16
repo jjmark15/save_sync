@@ -1,9 +1,7 @@
 use http::status::StatusCode;
 use spectral::prelude::*;
-use uuid::Uuid;
 
-use server_test_client::dto::SaveId;
-
+use crate::helpers::default_values::default_save_id;
 use crate::helpers::{store_default_new_save, TestContext};
 
 #[tokio::test]
@@ -20,7 +18,7 @@ async fn check_latest_version() {
 #[tokio::test]
 async fn fails_to_check_latest_version_when_id_does_not_exist() {
     let ctx = TestContext::new();
-    let save_id = SaveId::new(Uuid::nil().to_string());
+    let save_id = default_save_id();
 
     let response = ctx.client().latest_version(&save_id).await;
 
