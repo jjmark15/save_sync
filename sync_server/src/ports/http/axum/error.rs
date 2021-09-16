@@ -13,3 +13,9 @@ pub(crate) enum StoreNewSaveError {
     EmptySaveFileName(#[from] EmptySaveFileNameError),
     Application(#[from] crate::domain::StoreNewSaveError),
 }
+
+#[derive(Debug, thiserror::Error)]
+#[error(transparent)]
+pub(crate) enum GetSaveError {
+    Application(#[from] crate::domain::GetSaveError),
+}

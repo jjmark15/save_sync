@@ -11,5 +11,5 @@ pub(crate) enum GetSaveError {
 }
 
 #[derive(Debug, thiserror::Error, derive_new::new)]
-#[error("Save with Id '{0}' not found")]
+#[error("save with ID '{0}' not found")]
 pub(crate) struct SaveNotFoundError(SaveId);

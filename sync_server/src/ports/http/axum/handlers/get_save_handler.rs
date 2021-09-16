@@ -5,6 +5,7 @@ use axum::Json;
 use uuid::Uuid;
 
 use crate::domain::Save;
+use crate::ports::http::axum::handlers::app_error::AppError;
 use crate::ports::http::axum::models::GetSaveResponse;
 use crate::DynApplicationService;
 
@@ -13,8 +14,11 @@ pub(crate) async fn get_save_handler(
     Path(save_id): Path<String>,
 ) -> impl IntoResponse {
     let save_id = Uuid::parse_str(save_id.as_str()).unwrap();
-    let save = application_service.get_save(save_id).await.unwrap();
-    (StatusCode::OK, Json(response_body(save)))
+    application_service
+        .get_save(save_id)
+        .await
+        .map_err(|error| AppError::GetSave(error.into()))
+        .map(|save| (StatusCode::OK, Json(response_body(save))))
 }
 
 fn response_body(save: Save) -> GetSaveResponse {

@@ -5,8 +5,7 @@ use axum::http::{Response, StatusCode};
 use axum::response::IntoResponse;
 use axum::Json;
 
-use crate::domain::GetSaveError;
-use crate::ports::http::axum::error::StoreNewSaveError;
+use crate::ports::http::axum::error::{GetSaveError, StoreNewSaveError};
 use crate::ports::http::axum::models::ErrorResponse;
 
 #[derive(Debug, thiserror::Error)]

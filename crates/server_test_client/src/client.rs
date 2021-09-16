@@ -98,7 +98,7 @@ impl ServerTestClient {
         .await
     }
 
-    pub async fn latest_version(&self, save_id: SaveId) -> ResponseWrapper<u32> {
+    pub async fn latest_version(&self, save_id: &SaveId) -> ResponseWrapper<u32> {
         self.client_call(
             &["save", "version", "latest", save_id.to_string().as_str()],
             Method::GET,
